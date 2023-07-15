@@ -8,13 +8,14 @@
 class sphere : public hittable {
 public:
     sphere() {}
-    sphere(point3 cen, double r) : center(cen), radius(r) {};
+    sphere(point3 cen, double r, shared_ptr<material> m) : center(cen), radius(r), p_Material(m) {};
 
     virtual bool hit(const ray& r, double tMin, double tMax, hitRecord& rec) const override;
 
 public:
     point3 center;
     double radius;
+    shared_ptr<material> p_Material;
 };
 
 #endif

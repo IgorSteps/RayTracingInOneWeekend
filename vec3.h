@@ -61,6 +61,13 @@ public:
 		return vec3(randomDouble(min, max), randomDouble(min, max), randomDouble(min, max));
 	}
 
+	// Return true if the vector is close to zero in all dimensions.
+	bool nearZero() const 
+	{
+		const auto s = 1e-8;
+		return (fabs(e[0]) < s) && (fabs(e[1]) < s) && (fabs(e[2]) < s);
+	}
+
 public:
 	double e[3];
 };
@@ -141,6 +148,12 @@ inline vec3 randomInUnitSphere()
 inline vec3 randomUnitVector()
 {
 	return unitVector(randomInUnitSphere());
+}
+
+// Reflected ray direction is v+2b, n is a unit vector, v may not be.
+// The length of b should be v*n. Because v points in, we will need a minus sign.
+inline vec3 reflect(const vec3& v, const vec3& n) {
+	return v - 2 * dot(v, n) * n;
 }
 
 #endif

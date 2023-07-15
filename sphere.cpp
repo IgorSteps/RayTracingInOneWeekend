@@ -29,10 +29,10 @@ bool sphere::hit(const ray& r, double tMin, double tMax, hitRecord& rec) const
 
     rec.t = root;
     rec.p = r.at(rec.t);
-
     // determine surface side.
     vec3 outwardNormal = (rec.p - center) / radius;
     rec.setFaceNormal(r, outwardNormal);
+    rec.p_Material = p_Material;
 
     return true;
 } 
