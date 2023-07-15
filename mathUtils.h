@@ -1,6 +1,7 @@
 #pragma once
 #ifndef MATHSUTILS_H
 #define MATHSUTILS_H
+#include <random>
 
 // Usings
 
@@ -15,8 +16,20 @@ const double pi = 3.1415926535897932385;
 
 // Utility Functions
 
-inline double degrees_to_radians(double degrees) {
+inline double degreesToRadians(double degrees) {
     return degrees * pi / 180.0;
+}
+
+// returns a random real in [0,1).
+inline double randomDouble() {
+    static std::uniform_real_distribution<double> distribution(0.0, 1.0);
+    static std::mt19937 generator;
+    return distribution(generator);
+}
+
+// returns a random real in [min,max).
+inline double randomDdouble(double min, double max) {
+    return min + (max - min) * randomDouble();
 }
 
 // Common Headers
