@@ -4,6 +4,7 @@
 #include "colour.h"
 #include "hittableList.h"
 #include "sphere.h"
+#include "camera.h"
 
 // Linearly blends white and blue depending on the height of the y coordinate
 // after scaling the ray direction to unit length(so −1.0 < y < 1.0).
@@ -27,6 +28,7 @@ int main()
 	const auto aspectRatio = 16.0 / 9.0;
     const int imageWidth = 400;
     const int imageHeight = static_cast<int>(imageWidth / aspectRatio);
+	const int samplesPerPixel = 100;
 
 	// world.
 	hittableList world;
@@ -34,28 +36,26 @@ int main()
 	world.add(make_shared<sphere>(point3(0, -100.5, -1), 100));
 
 	// camera.
-	auto viewportHeight = 2.0;
-	auto viewportWidth = aspectRatio * viewportHeight;
-	auto focalLength = 1.0;
-
-	auto origin = point3(0, 0, 0);
-	auto horizontal = vec3(viewportWidth, 0, 0);
-	auto vertical = vec3(0, viewportHeight, 0);
-	auto lowerLeftCorner = origin - horizontal / 2 - vertical / 2 - vec3(0, 0, focalLength);
+	camera cam;
 
 	// render.
-	std::cout << "P3\n" << imageWidth << ' ' << imageHeight << "\n255\n";
-
 	for (int j = imageHeight - 1; j >= 0; --j) 
 	{
 		std::cerr << "\rScanlines remaining: " << j << ' ' << std::flush;
 		for (int i = 0; i < imageWidth; ++i) 
 		{
-			auto u = double(i) / (imageWidth - 1);
-			auto v = double(j) / (imageHeight - 1);
-			ray r(origin, lowerLeftCorner + u * horizontal + v * vertical - origin);
-			color pixelColour = rayColor(r, world);
-			writeColor(std::cout, pixelColour);
+			color pixelColor(0, 0, 0);
+			// For a given pixel we have 100 samples within that pixel and send rays through
+			// each of the samples. The colors of these rays are then averaged to achieve
+			// smoother edges.
+			for (int s = 0; s < samplesPerPixel; ++s)
+			{
+				auto u = (i + randomDouble()) / (imageWidth - 1);
+				auto v = (j + randomDouble()) / (imageHeight - 1);
+				ray r = cam.getRay(u, v);
+				pixelColor += rayColor(r, world);
+			}
+			writeColor(std::cout, pixelColor, samplesPerPixel);
 		}
 	}
 

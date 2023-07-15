@@ -35,4 +35,4 @@ bool sphere::hit(const ray& r, double tMin, double tMax, hitRecord& rec) const
     rec.setFaceNormal(r, outwardNormal);
 
     return true;
-}
+} 
