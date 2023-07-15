@@ -1,19 +1,27 @@
-﻿#include <iostream>
-#include "mathUtils.h"
+﻿#include "mathUtils.h"
 
+#include "camera.h"
 #include "colour.h"
 #include "hittableList.h"
 #include "sphere.h"
-#include "camera.h"
+
+#include <iostream>
 
 // Linearly blends white and blue depending on the height of the y coordinate
 // after scaling the ray direction to unit length(so −1.0 < y < 1.0).
-color rayColor(const ray& r, const hittable& world)
+color rayColor(const ray& r, const hittable& world, int depth)
 {
-	hitRecord rec;
-	if (world.hit(r, 0, infinity, rec))
+	// if we've exceeded the ray bounce limit, no more light is gathered.
+	if (depth <= 0)
 	{
-		return 0.5 * (rec.normal + color(1, 1, 1));
+		return color(0, 0, 0);
+	}
+
+	hitRecord rec;
+	if (world.hit(r, 0.001, infinity, rec))
+	{
+		point3 target = rec.p + rec.normal + randomUnitVector();
+		return 0.5 * rayColor(ray(rec.p, target - rec.p), world, depth -1);
 	}
 
 	vec3 unitDir = unitVector(r.direction());
@@ -29,6 +37,7 @@ int main()
     const int imageWidth = 400;
     const int imageHeight = static_cast<int>(imageWidth / aspectRatio);
 	const int samplesPerPixel = 100;
+	const int maxDepth = 50;
 
 	// world.
 	hittableList world;
@@ -39,6 +48,8 @@ int main()
 	camera cam;
 
 	// render.
+	std::cout << "P3\n" << imageWidth << ' ' << imageHeight << "\n255\n";
+
 	for (int j = imageHeight - 1; j >= 0; --j) 
 	{
 		std::cerr << "\rScanlines remaining: " << j << ' ' << std::flush;
@@ -53,7 +64,7 @@ int main()
 				auto u = (i + randomDouble()) / (imageWidth - 1);
 				auto v = (j + randomDouble()) / (imageHeight - 1);
 				ray r = cam.getRay(u, v);
-				pixelColor += rayColor(r, world);
+				pixelColor += rayColor(r, world, maxDepth);
 			}
 			writeColor(std::cout, pixelColor, samplesPerPixel);
 		}

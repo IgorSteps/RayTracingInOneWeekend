@@ -6,6 +6,7 @@
 #include <iostream>
 
 using std::sqrt;
+
 class vec3
 {
 public:
@@ -50,6 +51,16 @@ public:
 		return e[0] * e[0] + e[1] * e[1] + e[2] * e[2];
 	}
 
+	inline static vec3 random() 
+	{
+		return vec3(randomDouble(), randomDouble(), randomDouble());
+	}
+
+	inline static vec3 random(double min, double max) 
+	{
+		return vec3(randomDouble(min, max), randomDouble(min, max), randomDouble(min, max));
+	}
+
 public:
 	double e[3];
 };
@@ -59,29 +70,35 @@ public:
 using point3 = vec3;   // 3D point
 using color = vec3;    // RGB color
 
-#endif
+// Vec3 utility functions:
 
-inline std::ostream& operator<<(std::ostream& out, const vec3& v) {
+inline std::ostream& operator<<(std::ostream& out, const vec3& v) 
+{
 	return out << v.e[0] << ' ' << v.e[1] << ' ' << v.e[2];
 }
 
-inline vec3 operator+(const vec3& u, const vec3& v) {
+inline vec3 operator+(const vec3& u, const vec3& v) 
+{
 	return vec3(u.e[0] + v.e[0], u.e[1] + v.e[1], u.e[2] + v.e[2]);
 }
 
-inline vec3 operator-(const vec3& u, const vec3& v) {
+inline vec3 operator-(const vec3& u, const vec3& v) 
+{
 	return vec3(u.e[0] - v.e[0], u.e[1] - v.e[1], u.e[2] - v.e[2]);
 }
 
-inline vec3 operator*(const vec3& u, const vec3& v) {
+inline vec3 operator*(const vec3& u, const vec3& v) 
+{
 	return vec3(u.e[0] * v.e[0], u.e[1] * v.e[1], u.e[2] * v.e[2]);
 }
 
-inline vec3 operator*(double t, const vec3& v) {
+inline vec3 operator*(double t, const vec3& v) 
+{
 	return vec3(t * v.e[0], t * v.e[1], t * v.e[2]);
 }
 
-inline vec3 operator*(const vec3& v, double t) {
+inline vec3 operator*(const vec3& v, double t) 
+{
 	return t * v;
 }
 
@@ -89,18 +106,41 @@ inline vec3 operator/(vec3 v, double t) {
 	return (1 / t) * v;
 }
 
-inline double dot(const vec3& u, const vec3& v) {
+inline double dot(const vec3& u, const vec3& v) 
+{
 	return u.e[0] * v.e[0]
 		+ u.e[1] * v.e[1]
 		+ u.e[2] * v.e[2];
 }
 
-inline vec3 cross(const vec3& u, const vec3& v) {
-	return vec3(u.e[1] * v.e[2] - u.e[2] * v.e[1],
+inline vec3 cross(const vec3& u, const vec3& v) 
+{
+	return vec3(
+		u.e[1] * v.e[2] - u.e[2] * v.e[1],
 		u.e[2] * v.e[0] - u.e[0] * v.e[2],
-		u.e[0] * v.e[1] - u.e[1] * v.e[0]);
+		u.e[0] * v.e[1] - u.e[1] * v.e[0]
+	);
 }
 
-inline vec3 unitVector(vec3 v) {
+inline vec3 unitVector(vec3 v)
+{
 	return v / v.length();
 }
+
+inline vec3 randomInUnitSphere()
+{
+	while (true)
+	{
+		auto p = vec3::random(-1, 1);
+		if (p.lengthSquared() >= 1) 
+			continue;
+		return p;
+	}
+}
+
+inline vec3 randomUnitVector()
+{
+	return unitVector(randomInUnitSphere());
+}
+
+#endif

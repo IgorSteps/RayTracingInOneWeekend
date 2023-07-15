@@ -25,7 +25,7 @@ inline double randomDouble() {
 }
 
 // returns a random real in [min,max].
-inline double randomDdouble(double min, double max) {
+inline double randomDouble(double min, double max) {
     return min + (max - min) * randomDouble();
 }
 

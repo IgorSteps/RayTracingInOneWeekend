@@ -2,7 +2,7 @@
 #ifndef HITTABLE_H
 #define HITTABLE_H
 
-#include "ray.h"
+#include "mathUtils.h"
 
 struct hitRecord {
     point3 p;
