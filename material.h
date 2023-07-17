@@ -62,4 +62,24 @@ public:
 	double fuzzines;
 };
 
+class dielectric : public material {
+public:
+	dielectric(double refractionInx) : refractionInd(refractionInx) {}
+
+	virtual bool scatter(const ray& rIn, const hitRecord& rec, color& attenuation, ray& scattered) const override
+	{
+		attenuation = color(1.0, 1.0, 1.0);
+		double refractionRation = rec.frontFace ? (1.0 / refractionInd) : refractionInd;
+
+		vec3 unit_direction = unitVector(rIn.direction());
+		vec3 refracted = refract(unit_direction, rec.normal, refractionRation);
+
+		scattered = ray(rec.p, refracted);
+		return true;
+	}
+
+public:
+	double refractionInd; 
+};
+
 #endif
